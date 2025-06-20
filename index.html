@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+
+    <style>
+        body {
+            background-color: rgb(0, 204, 255);
+            margin: 0;
+            overflow: hidden; /* Evita a barra de rolagem */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .painel {
+            background-color: white;
+            width: 500px;
+            height: 500px;
+            border-radius: 20px;
+            text-align: center;
+            padding-top: 50px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .botoes {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 30px; /* Espaço entre os botões */
+        }
+
+        #sim {
+            height: 45px;
+            width: 80px;
+            background-color: #ff4d4d;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        #sim:hover {
+            background-color: #ff3333;
+            transform: scale(1.05);
+        }
+
+        #nao {
+            height: 45px;
+            min-width: 80px;
+            padding: 0 20px;
+            background-color: #ff4d4d;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            position: static;
+        }
+
+        /* Efeito de fuga rápida */
+        @keyframes fugir {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(5px, 5px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .fugindo {
+            animation: fugir 0.3s ease;
+        }
+
+        img {
+            max-width: 200px;
+            margin: 20px 0;
+        }
+
+        h1 {
+            color: #ff4d4d;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="painel">
+        <h1>Bom Dia!!!</h1>
+        <img src="https://gifman.net/wp-content/uploads/2019/06/ursinho-fofo-apaixonado.gif" alt="">
+        <h2>Aceita namorar comigo?</h2>
+        
+        <div class="botoes">
+            <a href="https://www.youtube.com/watch?v=oRvND-r57Us"><button id="sim">Sim!</button></a>
+            <button onmouseover="fuja()" id="nao">Não!</button>
+        </div>
+    </div>
+
+   <script>
+    var frases = [
+        "Não!",
+        "Por quê?",
+        "Não!!!",
+        "Para com isso",
+        "Para com isso",
+        "Por favor!!!",
+        "Desista!!!",
+        "Eu mordo em!",
+        "Socorro!",
+        "te pago um açai!"
+    ];
+    var contador = 0; // Começa no 0 para a primeira frase
+    var ultimaPosX = null;
+    var ultimaPosY = null;
+
+    function fuja(event) {
+        var botaoNao = document.getElementById("nao");
+        var botoesDiv = document.querySelector(".botoes");
+        var botoesRect = botoesDiv.getBoundingClientRect();
+
+        // Primeiro atualiza o texto com a frase atual
+        botaoNao.textContent = frases[contador];
+        
+        // Depois incrementa o contador para a próxima vez
+        contador = (contador + 1) % frases.length;
+
+        // Restante do código (movimento, efeitos visuais)
+        botaoNao.style.borderRadius = Math.random() > 0.5 ? "10px" : "25px";
+        botaoNao.classList.add("fugindo");
+        setTimeout(() => botaoNao.classList.remove("fugindo"), 300);
+
+        var mouseX = event.clientX - botoesRect.left;
+        var mouseY = event.clientY - botoesRect.top;
+
+        var novaX, novaY;
+        var distanciaMinima = 150;
+        var tentativas = 0;
+        
+        do {
+            var areaOpostaX = mouseX < botoesRect.width/2 ? botoesRect.width/2 : 0;
+            var areaOpostaY = mouseY < botoesRect.height/2 ? botoesRect.height/2 : 0;
+            
+            novaX = areaOpostaX + Math.random() * (botoesRect.width/2 - botaoNao.offsetWidth);
+            novaY = areaOpostaY + Math.random() * (botoesRect.height/2 - botaoNao.offsetHeight);
+            
+            tentativas++;
+            
+        } while (Math.sqrt(Math.pow(novaX - mouseX, 2) + Math.pow(novaY - mouseY, 2)) < distanciaMinima && tentativas < 10);
+
+        novaX = Math.max(10, Math.min(novaX, botoesRect.width - botaoNao.offsetWidth - 10));
+        novaY = Math.max(10, Math.min(novaY, botoesRect.height - botaoNao.offsetHeight - 10));
+
+        botaoNao.style.position = "absolute";
+        botaoNao.style.left = novaX + "px";
+        botaoNao.style.top = novaY + "px";
+        
+        event.preventDefault();
+        return false;
+    }
+    
+    // Inicializa com a primeira frase ao carregar
+    window.onload = function() {
+        document.getElementById("nao").textContent = frases[0];
+    };
+    
+    document.getElementById("nao").addEventListener("mouseover", fuja);
+</script>
+</body>
+</html>
